@@ -16,16 +16,12 @@ void setup() {
   installAndSetPin();
 
   delay(2000);
+
+  xTaskCreate(micTask, "micTask", 4096, NULL, 1, NULL);
+  xTaskCreate(modelTask, "modelTask", 8192, NULL, 2, NULL);
 }
 
 
 void loop() {
-  if (readMic()) {
-    inputModel(StreamBuffer);
-    if (!outputModel()) {
-      Serial.println("Invoke failed!");
-      return;
-    }
-  }
-  delay(2000);
+
 }
