@@ -2,6 +2,8 @@
 
 int16_t StreamBuffer[BUFFER_SIZE];
 
+QueueHandle_t micQueue = xQueueCreate(4, sizeof(int16_t) * BUFFER_SIZE);
+
 i2s_config_t i2s_config = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
     .sample_rate = SOUND_SAMPLE_RATE,
@@ -49,4 +51,12 @@ bool readMic() {
     size_t bytesRead = 0;
     esp_err_t result = i2s_read(I2S_PORT, &StreamBuffer, StreamBufferNumBytes, &bytesRead, portMAX_DELAY);
     return bytesRead == StreamBufferNumBytes;
+}
+
+void micTask(void* param) {
+    while (1) {
+        if (readMic()) {
+            xQueueSend(micQueue, StreamBuffer, 0);
+        }
+    }
 }
