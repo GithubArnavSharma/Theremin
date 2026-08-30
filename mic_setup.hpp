@@ -20,6 +20,10 @@ extern const int StreamBufferNumBytes;
 
 extern int16_t StreamBuffer[BUFFER_SIZE];
 
+extern QueueHandle_t micQueue;
+
 void installAndSetPin();
 
 bool readMic();
+
+void micTask(void* param);
