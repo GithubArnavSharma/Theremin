@@ -73,8 +73,19 @@ bool outputModel() {
     }
 
     double freq = index_to_hz(highIndex);
+    double freqPlusMinus = freq - 589.39; 
 
-    Serial.printf("Prob: %.3f Index: %d Frequency: %.2f Hz", highProb, highIndex, freq);
+    Serial.printf("Prob: %.3f Index: %d Frequency: (+-) %.2f Hz\n", highProb, highIndex, freqPlusMinus);
 
     return true;
+}
+
+void modelTask(void* param) {
+    int16_t local_buffer[BUFFER_SIZE];
+    while (1) {
+        if (xQueueReceive(micQueue, local_buffer, portMAX_DELAY)) {
+            inputModel(local_buffer);
+            outputModel();
+        }
+    }
 }
